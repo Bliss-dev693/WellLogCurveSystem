@@ -1,8 +1,52 @@
-# WellLogCurveSystem
+<img width="2549" height="1408" alt="image" src="https://github.com/user-attachments/assets/8c4317ef-ebc4-47e1-91d8-00467f67b3e9" /># WellLogCurveSystem
 基于vue3+spring boot+LSTM神经网络的测井重构曲线系统
 
 ## 效果展示
+首页
+<img width="2555" height="1409" alt="image" src="https://github.com/user-attachments/assets/4bb9b8ee-a677-4183-a1dd-d301cb04b6d2" />
+登录页
+<img width="2556" height="1415" alt="image" src="https://github.com/user-attachments/assets/2f8c7636-f37e-4208-a619-d089ac4b1300" />
+工作台
 
+<img width="2542" height="1425" alt="image" src="https://github.com/user-attachments/assets/7c3e3000-7b9a-4425-98d6-36809db44e8e" />
+<img width="2547" height="1420" alt="image" src="https://github.com/user-attachments/assets/28a3d48c-9479-462e-8754-2a9a7ecdb33b" />
+AI助手
+
+<img width="2552" height="1410" alt="image" src="https://github.com/user-attachments/assets/8266eef3-4932-48dc-a128-c333888260a9" />
+
+系统通知
+
+<img width="2547" height="1371" alt="image" src="https://github.com/user-attachments/assets/6a5be154-290d-438f-b26a-b141aedf12d2" />
+
+曲线重构-手动录入
+
+<img width="2537" height="1405" alt="image" src="https://github.com/user-attachments/assets/e8d9cc2d-3756-41c6-8e93-048fe0bd0616" />
+
+数据查看
+
+<img width="2558" height="1422" alt="image" src="https://github.com/user-attachments/assets/5423b6c0-5533-4dcd-96c1-d92e11921b52" />
+报告模板
+<img width="2549" height="1406" alt="image" src="https://github.com/user-attachments/assets/130ae6fb-9db8-409d-810d-4e3be3858644" />
+报告生成
+
+<img width="2551" height="1425" alt="image" src="https://github.com/user-attachments/assets/e838b6d5-acb8-4493-804a-453fdf415dfc" />
+历史记录
+<img width="2554" height="1411" alt="image" src="https://github.com/user-attachments/assets/a924140e-9d6d-4555-931d-572a7f66ad33" />
+可视化分析
+
+<img width="2559" height="1410" alt="image" src="https://github.com/user-attachments/assets/b2e9bb10-19b5-450c-83ff-d417ed2cc463" />
+
+<img width="2279" height="867" alt="image" src="https://github.com/user-attachments/assets/aedbb810-20a5-468a-aea0-fcb317d3cf78" />
+
+知识参考
+
+<img width="2559" height="1470" alt="image" src="https://github.com/user-attachments/assets/7008f165-ecfa-4c13-b70a-63dd5d9e8f3c" />
+
+个人资料
+
+<img width="2559" height="1426" alt="image" src="https://github.com/user-attachments/assets/6bec3440-fe42-4676-807d-829e8ffe23fc" />
+<img width="2551" height="684" alt="image" src="https://github.com/user-attachments/assets/265350bd-e1c5-4632-8d4b-ad1cbd0b2110" />
+<img width="2550" height="906" alt="image" src="https://github.com/user-attachments/assets/6fe17be1-a1ca-45db-bb44-31057d877cd5" />
 
 
 # 技术
