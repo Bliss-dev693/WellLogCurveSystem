@@ -1,0 +1,43 @@
+package com.example.WellLogCurveSystem.entity;
+
+
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+
+public class User {
+    @NotNull
+
+    private Integer id;//主键ID
+    
+
+    private String username;//用户名
+    
+
+    @JsonIgnore
+    private String password;//密码
+    
+
+    private String nickname;//昵称
+    
+
+    private String email;//邮箱
+    
+
+    private String userPic;//用户头像地址
+    
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;//创建时间
+    
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateTime;//更新时间
+}

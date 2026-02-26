@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.WellLogCurveSystem.mapper.PredictionHistoryMapper">
+
+    <!-- 根据用户ID查询历史记录 -->
+    <select id="findByUserId" parameterType="map" resultType="com.example.WellLogCurveSystem.entity.PredictionHistory">
+        SELECT * FROM prediction_history WHERE user_id = #{userId}
+        <if test="datasetName != null and datasetName != ''"> AND dataset_name LIKE CONCAT('%', #{datasetName}, '%')</if>
+        <if test="wellName != null and wellName != ''"> AND well_name LIKE CONCAT('%', #{wellName}, '%')</if>
+        <if test="status != null and status != ''"> AND status = #{status}</if>
+        ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 根据用户ID统计历史记录总数 -->
+    <select id="countByUserId" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM prediction_history WHERE user_id = #{userId}
+        <if test="datasetName != null and datasetName != ''"> AND dataset_name LIKE CONCAT('%', #{datasetName}, '%')</if>
+        <if test="wellName != null and wellName != ''"> AND well_name LIKE CONCAT('%', #{wellName}, '%')</if>
+        <if test="status != null and status != ''"> AND status = #{status}</if>
+    </select>
+
+    <!-- 根据井名查询历史记录 -->
+    <select id="findByWellName" parameterType="map" resultType="com.example.WellLogCurveSystem.entity.PredictionHistory">
+        SELECT * FROM prediction_history WHERE well_name LIKE CONCAT('%', #{wellName}, '%')
+        <if test="datasetName != null and datasetName != ''"> AND dataset_name LIKE CONCAT('%', #{datasetName}, '%')</if>
+        <if test="status != null and status != ''"> AND status = #{status}</if>
+        ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 根据井名统计历史记录总数 -->
+    <select id="countByWellName" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM prediction_history WHERE well_name LIKE CONCAT('%', #{wellName}, '%')
+        <if test="datasetName != null and datasetName != ''"> AND dataset_name LIKE CONCAT('%', #{datasetName}, '%')</if>
+        <if test="status != null and status != ''"> AND status = #{status}</if>
+    </select>
+
+    <!-- 按用户ID查询所有历史预测记录（无分页，用于CSV导出） -->
+    <select id="findAllByUserId" parameterType="int" resultType="com.example.WellLogCurveSystem.entity.PredictionHistory">
+        SELECT * FROM prediction_history WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 用户统计：查询指定用户的预测历史记录总数 -->
+    <select id="countCurvesByUserId" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM prediction_history WHERE user_id = #{userId}
+    </select>
+
+    <!-- 用户统计：查询指定用户的总处理时间 -->
+    <select id="getTotalProcessingTimeByUserId" parameterType="int" resultType="long">
+        SELECT COALESCE(SUM(execution_time), 0) FROM prediction_history WHERE user_id = #{userId}
+    </select>
+
+    <!-- 用户统计：查询指定用户今日新增预测记录数 -->
+    <select id="countCurvesAddedTodayByUserId" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM prediction_history WHERE user_id = #{userId} AND DATE(create_time) = CURDATE()
+    </select>
+
+    <!-- 用户统计：计算指定用户的预测准确率 -->
+    <select id="getUserPredictionAccuracy" parameterType="int" resultType="java.math.BigDecimal">
+        SELECT 
+          CASE 
+            WHEN COUNT(*) = 0 THEN 0 
+            ELSE ROUND((SUM(CASE WHEN status = 'SUCCESS' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) 
+          END as accuracy_rate 
+        FROM prediction_history WHERE user_id = #{userId}
+    </select>
+
+    <!-- 用户统计：计算指定用户准确率提升幅度 -->
+    <select id="getUserAccuracyLift" parameterType="int" resultType="java.math.BigDecimal">
+        SELECT 
+          CASE 
+            WHEN prev_accuracy IS NULL OR prev_accuracy = 0 THEN 0 
+            ELSE ROUND((curr_accuracy - prev_accuracy), 2) 
+          END as accuracy_lift 
+        FROM ( 
+          SELECT 
+            AVG(CASE WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') AND status = 'SUCCESS' THEN 100.0 
+                     WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') THEN 0 END) as curr_accuracy, 
+            AVG(CASE WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m') AND status = 'SUCCESS' THEN 100.0 
+                     WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m') THEN 0 END) as prev_accuracy 
+          FROM prediction_history WHERE user_id = #{userId}
+        ) t
+    </select>
+
+    <!-- 用户统计：计算指定用户处理时间节省率 -->
+    <select id="getUserTimeSavedRate" parameterType="int" resultType="java.math.BigDecimal">
+        SELECT 
+          CASE 
+            WHEN prev_time IS NULL OR prev_time = 0 THEN 0 
+            ELSE ROUND(((prev_time - curr_time) / prev_time) * 100, 2) 
+          END as time_saved_rate 
+        FROM ( 
+          SELECT 
+            AVG(CASE WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') THEN execution_time END) as curr_time, 
+            AVG(CASE WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m') THEN execution_time END) as prev_time 
+          FROM prediction_history WHERE user_id = #{userId}
+        ) t
+    </select>
+
+</mapper>

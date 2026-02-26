@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.WellLogCurveSystem.mapper.ReportTemplateMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="ReportTemplateMap" type="com.example.WellLogCurveSystem.entity.ReportTemplate">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="category" property="category"/>
+        <result column="documentUrl" property="documentUrl"/>
+        <result column="variables" property="variables"/>
+        <result column="is_public" property="isPublic"/>
+        <result column="usage_count" property="usageCount"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 根据条件查询模板列表 -->
+    <select id="selectTemplateList" resultMap="ReportTemplateMap">
+        SELECT id, user_id, name, description, category, documentUrl, variables,
+               is_public, usage_count, status, create_time, update_time
+        FROM report_template
+        WHERE status = 1
+        <if test="keyword != null and keyword != ''">
+            AND (name LIKE CONCAT('%', #{keyword}, '%') 
+                 OR description LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="category != null and category != ''">
+            AND category = #{category}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="isPublic != null">
+            AND is_public = #{isPublic}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据ID获取模板详情 -->
+    <select id="selectById" resultMap="ReportTemplateMap">
+        SELECT id, user_id, name, description, category, documentUrl, variables,
+               is_public, usage_count, status, create_time, update_time
+        FROM report_template
+        WHERE id = #{id} AND status = 1
+    </select>
+
+    <!-- 插入新模板 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO report_template (user_id, name, description, category, documentUrl,
+                                   variables, is_public, usage_count, status, create_time, update_time)
+        VALUES (#{userId}, #{name}, #{description}, #{category}, #{documentUrl}, 
+                #{variables}, #{isPublic}, #{usageCount}, #{status}, NOW(), NOW())
+    </insert>
+
+    <!-- 更新模板 -->
+    <update id="updateById">
+        UPDATE report_template
+        SET
+        <if test="userId != null">
+            user_id = #{userId},
+        </if>
+        <if test="name != null and name != ''">
+            name = #{name},
+        </if>
+        <if test="description != null">
+            description = #{description},
+        </if>
+        <if test="category != null">
+            category = #{category},
+        </if>
+        <if test="documentUrl != null">
+            documentUrl = #{documentUrl},
+        </if>
+        <if test="variables != null">
+            variables = #{variables},
+        </if>
+        <if test="isPublic != null">
+            is_public = #{isPublic},
+        </if>
+        <if test="usageCount != null">
+            usage_count = #{usageCount},
+        </if>
+        <if test="status != null">
+            status = #{status},
+        </if>
+        update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID删除模板（软删除） -->
+    <update id="deleteById">
+        UPDATE report_template
+        SET status = 0, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 增加模板使用次数 -->
+    <update id="incrementUsageCount">
+        UPDATE report_template
+        SET usage_count = usage_count + 1, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 获取模板使用统计 -->
+    <select id="getTemplateUsageStats" resultMap="ReportTemplateMap">
+        SELECT id, user_id, name, description, category, documentUrl, variables,
+               is_public, usage_count, status, create_time, update_time
+        FROM report_template
+        WHERE user_id = #{userId} AND status = 1
+        ORDER BY usage_count DESC
+    </select>
+
+    <!-- 统计符合条件的模板数量 -->
+    <select id="countTemplates" resultType="int">
+        SELECT COUNT(*)
+        FROM report_template
+        WHERE status = 1
+        <if test="keyword != null and keyword != ''">
+            AND (name LIKE CONCAT('%', #{keyword}, '%') 
+                 OR description LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="category != null and category != ''">
+            AND category = #{category}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="isPublic != null">
+            AND is_public = #{isPublic}
+        </if>
+    </select>
+
+</mapper>

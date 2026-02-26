@@ -1,0 +1,500 @@
+// src/assets/main.scss
+
+/* 全局主题变量 */
+:root {
+  --bg-color: #f5f5f5;
+  --text-color: #333333;
+  --header-bg: #ffffff;
+  --main-bg: #ffffff;
+  --aside-bg: #232323;
+  --border-color: #e6e6e6;
+  --transition: background-color 0.3s ease, color 0.3s ease;
+  --primary-color: #409eff;
+  --muted-color: #95a5a6;
+  --muted-strong: #7f8c8d;
+  --danger-color: #f56c6c;
+  --hover-bg: #ecf5ff;
+  --menu-active-bg: #409eff;
+  --panel-bg: #ffffff;
+  --panel-contrast: #fbfbfd;
+  --card-bg: #ffffff;
+  --chart-bg: #ffffff;
+  --overlay: rgba(255,255,255,0.95);
+  --overlay-soft: rgba(255,255,255,0.2);
+  --primary-variant: #2980b9;
+  /* 图表系列色变量（默认浅色主题） */
+  --series-AC: #2ecc71;
+  --series-CAL: #3498db;
+  --series-CNL: #e67e22;
+  --series-DEN: #f39c12;
+  --series-GR: #e74c3c;
+  --series-RT: #9b59b6;
+  --series-RXO: #1abc9c;
+}
+
+/* 夜间模式覆盖变量（在 html 或 documentElement 上添加 .dark 即生效） */
+.dark {
+  --bg-color: #0f0f12;
+  --text-color: #e8eaed;
+  --header-bg: #1a1a1d;
+  --main-bg: #121215;
+  --aside-bg: #0f0f12;
+  --border-color: rgba(255,255,255,0.12);
+  --primary-color: #63b3ed;
+  --muted-color: #a0aec0;
+  --muted-strong: #e8eaed;
+  --danger-color: #fc8181;
+  --hover-bg: #2d3748;
+  --menu-active-bg: #2b81c8;
+  --panel-bg: #1a1a1d;
+  --panel-contrast: #161619;
+  --card-bg: #161619;
+  --chart-bg: #0a0a0c;
+  --overlay: rgba(0,0,0,0.85);
+  --overlay-soft: rgba(255,255,255,0.05);
+  --primary-variant: #256090;
+  /* 图表系列色在深色下的备用色（可按需调整） */
+  --series-AC: #2ecc71;
+  --series-CAL: #63b3ed;
+  --series-CNL: #e6a23c;
+  --series-DEN: #f39c12;
+  --series-GR: #f56565;
+  --series-RT: #9b59b6;
+  --series-RXO: #1abc9c;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', '微软雅黑', sans-serif;
+  font-size: 16px;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  transition: var(--transition);
+}
+
+/* fade-slide */
+.fade-slide-leave-active,
+.fade-slide-enter-active {
+  transition: all 0.3s;
+}
+
+.fade-slide-enter-from {
+  transform: translateX(-30px);
+  opacity: 0;
+}
+
+.fade-slide-leave-to {
+  transform: translateX(30px);
+  opacity: 0;
+}
+
+// 全局通用样式（使用CSS变量）
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 通用布局元素使用变量，这样子组件会继承主题 */
+.el-aside {
+  background-color: var(--aside-bg) !important;
+}
+
+.el-header {
+  background-color: var(--header-bg) !important;
+}
+
+.el-main {
+  background-color: var(--main-bg) !important;
+}
+
+.el-footer {
+  background-color: var(--header-bg) !important;
+  color: var(--text-color) !important;
+}
+
+/* 调整 Element Plus menu 在深色主题下的默认颜色（可按需扩展） */
+.dark .el-menu,
+.dark .el-menu-item,
+.dark .el-sub-menu__title {
+  background-color: var(--aside-bg) !important;
+  color: #e8eaed !important;
+}
+
+/* Element Plus 深色覆盖：表格、表单、弹窗、按钮等 */
+.dark {
+  /* inputs */
+  .el-input__inner,
+  .el-textarea__inner,
+  .el-select .el-input__inner {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .el-input__inner::placeholder,
+  .el-textarea__inner::placeholder {
+    color: var(--muted-color) !important;
+    opacity: 0.8 !important;
+  }
+
+  /* buttons */
+  .el-button {
+    color: var(--text-color) !important;
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+  }
+  .el-button--primary {
+    background-color: var(--primary-color) !important;
+    color: #e8eaed !important;
+    border-color: var(--primary-color) !important;
+  }
+  /* 文本按钮增强可见性 */
+  .el-button--text {
+    color: var(--primary-color) !important;
+    font-weight: 500 !important;
+  }
+
+  /* tables */
+  .el-table {
+    color: var(--text-color) !important;
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+  }
+  .el-table th {
+    background-color: rgba(255,255,255,0.08) !important;
+    color: var(--muted-strong) !important;
+    font-weight: 600 !important;
+  }
+  .el-table td {
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+  }
+
+  /* forms */
+  .el-form-item__label {
+    color: var(--muted-strong) !important;
+    font-weight: 500 !important;
+  }
+
+  /* dialog / modal */
+  .el-dialog__header,
+  .el-dialog__body,
+  .el-dialog__footer {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+  }
+  .el-dialog__header {
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  /* popover / tooltip */
+  .el-popover,
+  .el-tooltip,
+  .el-dropdown-menu {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+  }
+
+  /* pagination, tags, cards */
+  .el-pagination,
+  .el-tag,
+  .el-card {
+    color: var(--text-color) !important;
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* form controls */
+  .el-checkbox__inner,
+  .el-radio__inner,
+  .el-switch__core {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+  }
+
+  /* dropdowns / menus */
+  .el-dropdown-menu__item {
+    color: var(--text-color) !important;
+    
+    &:hover {
+      background-color: var(--hover-bg) !important;
+    }
+  }
+
+  /* mask / modal overlay */
+  .v-modal {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+  }
+
+  /* small helpers */
+  .el-badge__content {
+    background-color: var(--danger-color) !important;
+  }
+  
+  /* 加强链接和可点击元素的可见性 */
+  a {
+    color: var(--primary-color) !important;
+    
+    &:hover {
+      color: var(--primary-variant) !important;
+    }
+  }
+  
+  /* 加强图标颜色对比度 */
+  .el-icon {
+    color: var(--text-color) !important;
+  }
+}
+
+/* 修复深色模式下表格与表单控件对比度，避免内容看不清 */
+.dark {
+  /* 表格整体、头部、单元格文字 */
+  .el-table,
+  .el-table__header,
+  .el-table__body,
+  .el-table__row,
+  .el-table__cell,
+  .el-table th,
+  .el-table td,
+  .el-table__header-wrapper {
+    color: var(--text-color) !important;
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .el-table th,
+  .el-table__header th {
+    background-color: rgba(255,255,255,0.06) !important;
+    color: var(--muted-strong) !important;
+    font-weight: 600 !important;
+  }
+
+  .el-table td,
+  .el-table__body td {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+  }
+
+  .el-table .cell {
+    color: var(--text-color) !important;
+    font-weight: 400 !important;
+  }
+
+  /* 表格内的输入、筛选控件 */
+  .el-table .el-input__inner,
+  .el-table .el-select .el-input__inner {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .el-table .el-input__inner::placeholder {
+    color: var(--muted-color) !important;
+    opacity: 0.7 !important;
+  }
+
+  /* 捕获并替换页面中硬编码的白色背景或文字（常见于组件局部样式或内联样式） */
+  [style*="#fff"],
+  [style*="#ffffff"],
+  [style*="background: #fff"],
+  [style*="background-color: #fff"],
+  [style*="color: #fff"],
+  [style*="color: #ffffff"] {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* 常见警告/徽章在深色下的更好配色 */
+  .badge.warning,
+  .badge-warning,
+  .badge--warning {
+    background: rgba(255,193,7,0.15) !important;
+    color: #ffd166 !important;
+    border-color: rgba(255,193,7,0.3) !important;
+  }
+
+  /* 占位文本、空状态更明显 */
+  .el-empty__description,
+  .el-empty {
+    color: var(--muted-color) !important;
+  }
+
+  /* 提高表格头、单元格和输入占位的对比度 */
+  .el-table th {
+    color: var(--muted-strong) !important;
+  }
+
+  .el-input__inner::placeholder,
+  .el-textarea__inner::placeholder {
+    color: var(--muted-color) !important;
+    opacity: 0.8 !important;
+  }
+
+  /* 强制校正某些全局浅色样式残留 */
+  :deep(.el-table--fit) {
+    background-color: var(--card-bg) !important;
+  }
+  
+  /* 加强表单标签和描述文字 */
+  .el-form-item__label,
+  .el-descriptions__label {
+    color: var(--muted-strong) !important;
+    font-weight: 500 !important;
+  }
+  
+  /* 加强提示文字和帮助文本 */
+  .el-alert,
+  .el-message,
+  .el-notification {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+    
+    .el-alert__title,
+    .el-message__content {
+      color: var(--text-color) !important;
+      font-weight: 500 !important;
+    }
+  }
+}
+
+  /* 统一面板/卡片/图表容器的可读性样式（使用 CSS 变量，以便在深色/浅色主题下一致） */
+  .page-container,
+  .panel,
+  .card,
+  .el-card,
+  .container,
+  .dashboard-panel {
+    background-color: var(--panel-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+  }
+
+  /* 卡片内部使用 card-bg 以增强可读性 */
+  .el-card {
+    background-color: var(--card-bg) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+  }
+
+  /* 图表容器：当主题为深色时，chart-bg 可为更深色，保持曲线、文字对比 */
+  .chart-container,
+  .echarts-wrap,
+  .chart-panel {
+    background-color: var(--chart-bg) !important;
+    padding: 14px !important;
+    border-radius: 8px;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  /* 通知与任务卡片更明显的边框与背景 */
+  .notification-list,
+  .notification-item,
+  .todo-card {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+  }
+
+  /* 提升表格行与单元格对比，避免"灰掉"的文字 */
+  .el-table td .cell,
+  .el-table td,
+  .el-table th {
+    color: var(--text-color) !important;
+    font-weight: 400 !important;
+  }
+
+  /* 输入框与选择器在面板内也应使用 card-bg 以便在深色主题下可读 */
+  .el-input__inner,
+  .el-select .el-input__inner,
+  .el-textarea__inner {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+    
+    &:focus {
+      border-color: var(--primary-color) !important;
+      box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.2) !important;
+    }
+  }
+
+  /* 保证菜单与标签的可视性 */
+  .el-menu-item,
+  .el-sub-menu__title,
+  .el-form-item__label {
+    color: var(--muted-strong) !important;
+    font-weight: 500 !important;
+  }
+
+  /* 小调整：让空白状态/占位文本更明显 */
+  .el-empty__description,
+  .el-empty {
+    color: var(--muted-color) !important;
+    font-weight: 400 !important;
+  }
+
+  /* 加强列表项和导航项的可读性 */
+  .el-menu-item.is-active,
+  .el-tabs__item.is-active {
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+  }
+
+/* 额外覆盖：把页面中使用的浅色半透明背景在深色模式下替换为深色半透明，避免白色面板过亮 */
+.dark {
+  .loading-overlay {
+    background: rgba(0,0,0,0.7) !important;
+  }
+
+  .toolbar-btn {
+    background: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+    
+    &:hover {
+      background: var(--hover-bg) !important;
+      transform: translateY(-1px);
+    }
+  }
+
+  .analysis-tabs {
+    background: var(--panel-bg) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  .chart-wrapper {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  /* 如果页面中某些局部使用了接近白色的半透明背景，把它们在暗色模式下改为暗色半透明 */
+  .popup-white,
+  .light-overlay,
+  .card--light {
+    background: rgba(255,255,255,0.03) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  
+  /* 加强分割线可见性 */
+  .el-divider {
+    background-color: var(--border-color) !important;
+  }
+  
+  /* 加强进度条颜色对比 */
+  .el-progress-bar__outer {
+    background-color: rgba(255,255,255,0.1) !important;
+  }
+  
+  .el-progress-bar__inner {
+    background-color: var(--primary-color) !important;
+  }
+}

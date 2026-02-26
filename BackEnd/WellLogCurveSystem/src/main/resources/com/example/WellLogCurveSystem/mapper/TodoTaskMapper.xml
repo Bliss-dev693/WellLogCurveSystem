@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.WellLogCurveSystem.mapper.TodoTaskMapper">
+
+    <!-- 通用查询列 -->
+    <sql id="Base_Column_List">
+        id, user_id as userId, title, content, status, priority,
+        due_date as dueDate, category, finish_time as finishTime,
+        create_time as createTime, update_time as updateTime
+    </sql>
+
+    <!-- 分页查询待办列表 -->
+    <select id="selectTodoList" resultType="com.example.WellLogCurveSystem.entity.TodoTask">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM todoTask
+        WHERE user_id = #{userId}
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="priority != null">
+            AND priority = #{priority}
+        </if>
+        <if test="category != null and category != ''">
+            AND category LIKE CONCAT('%', #{category}, '%')
+        </if>
+        ORDER BY priority DESC, dueDate ASC
+    </select>
+
+    <!-- 查询列表总数 -->
+    <select id="selectTodoCount" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM todoTask
+        WHERE user_id = #{userId}
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="priority != null">
+            AND priority = #{priority}
+        </if>
+        <if test="category != null and category != ''">
+            AND category LIKE CONCAT('%', #{category}, '%')
+        </if>
+    </select>
+
+    <!-- 根据ID查询待办 -->
+    <select id="selectTodoById" resultType="com.example.WellLogCurveSystem.entity.TodoTask">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM todoTask
+        WHERE id = #{id} AND user_id = #{userId}
+    </select>
+
+    <!-- 新增待办 -->
+    <insert id="insertTodo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO todoTask (
+            user_id, title, content, status, priority,
+            due_date, category, create_time, update_time
+        ) VALUES (
+            #{userId}, #{title}, #{content}, #{status}, #{priority},
+            #{dueDate}, #{category}, #{createTime}, #{updateTime}
+        )
+    </insert>
+
+    <!-- 修改待办 -->
+    <update id="updateTodo">
+        UPDATE todoTask
+        SET
+        <if test="title != null and title != ''">
+            title = #{title},
+        </if>
+        <if test="content != null">
+            content = #{content},
+        </if>
+        <if test="priority != null">
+            priority = #{priority},
+        </if>
+        <if test="dueDate != null">
+            due_date = #{dueDate},
+        </if>
+        <if test="category != null">
+            category = #{category},
+        </if>
+        update_time = #{updateTime}
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <!-- 修改待办状态 -->
+    <update id="updateTodoStatus">
+        UPDATE todoTask
+        SET
+            status = #{status},
+            finish_time = #{finishTime},
+            update_time = #{updateTime}
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <!-- 删除待办 -->
+    <delete id="deleteTodo">
+        DELETE FROM todoTask
+        WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+
+    <!-- 统计状态分布 -->
+    <select id="selectStatusStats" resultType="com.example.WellLogCurveSystem.entity.TodoStatistics$StatItem">
+        SELECT
+            status as key,
+            CASE status
+                WHEN 0 THEN '待完成'
+                WHEN 1 THEN '已完成'
+                WHEN 2 THEN '已取消'
+                ELSE '未知'
+            END as text,
+            COUNT(1) as count
+        FROM todoTask
+        WHERE user_id = #{userId}
+        GROUP BY status
+    </select>
+
+    <!-- 统计优先级分布 -->
+    <select id="selectPriorityStats" resultType="com.example.WellLogCurveSystem.entity.TodoStatistics$StatItem">
+        SELECT
+            priority as key,
+            CASE priority
+                WHEN 0 THEN '低'
+                WHEN 1 THEN '中'
+                WHEN 2 THEN '高'
+                ELSE '未知'
+            END as text,
+            COUNT(1) as count
+        FROM todoTask
+        WHERE user_id = #{userId}
+        GROUP BY priority
+    </select>
+
+    <!-- 统计分类分布 -->
+    <select id="selectCategoryStats" resultType="com.example.WellLogCurveSystem.entity.TodoStatistics$StatItem">
+        SELECT
+            category as key,
+            category as text,
+            COUNT(1) as count
+        FROM todoTask
+        WHERE user_id = #{userId} AND category != ''
+        GROUP BY category
+    </select>
+
+    <!-- 查询临期提醒 -->
+    <select id="selectExpireReminder" resultType="com.example.WellLogCurveSystem.entity.TodoTask">
+        SELECT
+            id, title, due_date as dueDate, priority
+        FROM todoTask
+        WHERE user_id = #{userId}
+        AND status = 0
+        AND due_date BETWEEN #{now} AND #{expireTime}
+        ORDER BY priority DESC, dueDate ASC
+    </select>
+
+</mapper>

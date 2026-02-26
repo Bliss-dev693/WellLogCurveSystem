@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.WellLogCurveSystem.mapper.LogDataMapper">
+
+    <!-- 根据用户ID查询测井数据记录 -->
+    <select id="selectByUserId" parameterType="map" resultType="com.example.WellLogCurveSystem.entity.LogData">
+        SELECT * FROM log_data WHERE user_id = #{userId}
+        <if test="datasetName != null and datasetName != ''"> AND dataset_name = #{datasetName}</if>
+        <if test="wellName != null and wellName != ''"> AND well_name = #{wellName}</if>
+        <if test="minDepth != null or maxDepth != null">
+            AND depth BETWEEN #{minDepth} AND #{maxDepth}
+        </if>
+        <if test="isOriginal != null"> AND is_original = #{isOriginal}</if>
+        ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 根据用户ID统计测井数据记录总数 -->
+    <select id="countByUserId" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM log_data WHERE user_id = #{userId}
+        <if test="datasetName != null and datasetName != ''"> AND dataset_name = #{datasetName}</if>
+        <if test="wellName != null and wellName != ''"> AND well_name = #{wellName}</if>
+        <if test="minDepth != null or maxDepth != null">
+            AND depth BETWEEN #{minDepth} AND #{maxDepth}
+        </if>
+        <if test="isOriginal != null"> AND is_original = #{isOriginal}</if>
+    </select>
+
+    <!-- 根据井名查询测井数据记录 -->
+    <select id="selectByWellName" parameterType="map" resultType="com.example.WellLogCurveSystem.entity.LogData">
+        SELECT * FROM log_data WHERE well_name LIKE CONCAT('%', #{wellName}, '%')
+        <if test="userId != null"> AND user_id = #{userId}</if>
+        <if test="datasetName != null and datasetName != ''"> AND dataset_name LIKE CONCAT('%', #{datasetName}, '%')</if>
+        <if test="minDepth != null or maxDepth != null">
+            AND depth BETWEEN #{minDepth} AND #{maxDepth}
+        </if>
+        <if test="isOriginal != null"> AND is_original = #{isOriginal}</if>
+        ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 根据井名统计测井数据记录总数 -->
+    <select id="countByWellName" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM log_data WHERE well_name LIKE CONCAT('%', #{wellName}, '%')
+        <if test="userId != null"> AND user_id = #{userId}</if>
+        <if test="datasetName != null and datasetName != ''"> AND dataset_name LIKE CONCAT('%', #{datasetName}, '%')</if>
+        <if test="minDepth != null or maxDepth != null">
+            AND depth BETWEEN #{minDepth} AND #{maxDepth}
+        </if>
+        <if test="isOriginal != null"> AND is_original = #{isOriginal}</if>
+    </select>
+
+    <!-- 根据数据集名查询测井数据记录 -->
+    <select id="selectByDatasetName" parameterType="map" resultType="com.example.WellLogCurveSystem.entity.LogData">
+        SELECT * FROM log_data WHERE dataset_name LIKE CONCAT('%', #{datasetName}, '%')
+        <if test="userId != null"> AND user_id = #{userId}</if>
+        <if test="wellName != null and wellName != ''"> AND well_name LIKE CONCAT('%', #{wellName}, '%')</if>
+        <if test="minDepth != null or maxDepth != null">
+            AND depth BETWEEN #{minDepth} AND #{maxDepth}
+        </if>
+        <if test="isOriginal != null"> AND is_original = #{isOriginal}</if>
+        ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 根据数据集名统计测井数据记录总数 -->
+    <select id="countByDatasetName" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM log_data WHERE dataset_name LIKE CONCAT('%', #{datasetName}, '%')
+        <if test="userId != null"> AND user_id = #{userId}</if>
+        <if test="wellName != null and wellName != ''"> AND well_name LIKE CONCAT('%', #{wellName}, '%')</if>
+        <if test="minDepth != null or maxDepth != null">
+            AND depth BETWEEN #{minDepth} AND #{maxDepth}
+        </if>
+        <if test="isOriginal != null"> AND is_original = #{isOriginal}</if>
+    </select>
+
+    <!-- 查询所有测井数据记录 -->
+    <select id="selectAll" parameterType="map" resultType="com.example.WellLogCurveSystem.entity.LogData">
+        SELECT * FROM log_data
+        <where>
+            <if test="userId != null">user_id = #{userId}</if>
+            <if test="datasetName != null and datasetName != ''"> AND dataset_name LIKE CONCAT('%', #{datasetName}, '%')</if>
+            <if test="wellName != null and wellName != ''"> AND well_name LIKE CONCAT('%', #{wellName}, '%')</if>
+            <if test="minDepth != null or maxDepth != null"> AND depth BETWEEN #{minDepth} AND #{maxDepth}</if>
+            <if test="isOriginal != null"> AND is_original = #{isOriginal}</if>
+        </where>
+        ORDER BY create_time DESC LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 统计所有测井数据记录总数 -->
+    <select id="countAll" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM log_data
+        <where>
+            <if test="userId != null">user_id = #{userId}</if>
+            <if test="datasetName != null and datasetName != ''"> AND dataset_name LIKE CONCAT('%', #{datasetName}, '%')</if>
+            <if test="wellName != null and wellName != ''"> AND well_name LIKE CONCAT('%', #{wellName}, '%')</if>
+            <if test="minDepth != null or maxDepth != null"> AND depth BETWEEN #{minDepth} AND #{maxDepth}</if>
+            <if test="isOriginal != null"> AND is_original = #{isOriginal}</if>
+        </where>
+    </select>
+
+    <!-- 查询井数月环比增长率 -->
+    <select id="getWellsGrowthRateByUserId" parameterType="int" resultType="java.math.BigDecimal">
+        SELECT 
+          CASE 
+            WHEN LAG(cnt) OVER (ORDER BY month) IS NULL OR LAG(cnt) OVER (ORDER BY month) = 0 THEN 0 
+            ELSE ROUND(((cnt - LAG(cnt) OVER (ORDER BY month)) / LAG(cnt) OVER (ORDER BY month)) * 100, 2) 
+          END as growth_rate 
+        FROM ( 
+          SELECT DATE_FORMAT(create_time, '%Y-%m') as month, COUNT(DISTINCT well_name) as cnt 
+          FROM log_data WHERE user_id = #{userId} 
+          GROUP BY DATE_FORMAT(create_time, '%Y-%m') 
+          ORDER BY month DESC 
+          LIMIT 1 
+        ) t
+    </select>
+
+    <!-- 查询准确率提升幅度 -->
+    <select id="getAccuracyLiftByUserId" parameterType="int" resultType="java.math.BigDecimal">
+        SELECT 
+          CASE 
+            WHEN prev_avg IS NULL OR prev_avg = 0 THEN 0 
+            ELSE ROUND((curr_avg - prev_avg), 2) 
+          END as accuracy_lift 
+        FROM ( 
+          SELECT 
+            AVG(CASE WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') THEN confidence END) as curr_avg, 
+            AVG(CASE WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m') THEN confidence END) as prev_avg 
+          FROM log_data WHERE user_id = #{userId} AND confidence IS NOT NULL 
+        ) t
+    </select>
+
+    <!-- 查询处理时间节省率 -->
+    <select id="getTimeSavedRateByUserId" parameterType="int" resultType="java.math.BigDecimal">
+        SELECT 
+          CASE 
+            WHEN prev_time IS NULL OR prev_time = 0 THEN 0 
+            ELSE ROUND(((prev_time - curr_time) / prev_time) * 100, 2) 
+          END as time_saved_rate 
+        FROM ( 
+          SELECT 
+            AVG(CASE WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') THEN TIMESTAMPDIFF(SECOND, create_time, update_time) END) as curr_time, 
+            AVG(CASE WHEN DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m') THEN TIMESTAMPDIFF(SECOND, create_time, update_time) END) as prev_time 
+          FROM log_data WHERE user_id = #{userId} 
+        ) t
+    </select>
+
+    <!-- 用户统计：查询指定用户的不同井数量 -->
+    <select id="countDistinctWellsByUserId" parameterType="int" resultType="int">
+        SELECT COUNT(DISTINCT well_name) FROM log_data WHERE user_id = #{userId}
+    </select>
+
+    <!-- 用户统计：查询指定用户的曲线总数 -->
+    <select id="countCurvesByUserId" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM log_data WHERE user_id = #{userId}
+    </select>
+
+    <!-- 用户统计：查询指定用户的平均处理时间（毫秒） -->
+    <select id="getAverageProcessingTimeByUserId" parameterType="int" resultType="long">
+        SELECT AVG(TIMESTAMPDIFF(SECOND, create_time, update_time)) * 1000 FROM log_data WHERE user_id = #{userId}
+    </select>
+
+    <!-- 用户统计：查询指定用户今日新增曲线数 -->
+    <select id="countCurvesAddedTodayByUserId" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM log_data WHERE user_id = #{userId} AND DATE(create_time) = CURDATE()
+    </select>
+
+    <!-- 用户统计：查询指定用户的平均准确率 -->
+    <select id="getAverageConfidenceByUserId" parameterType="int" resultType="java.math.BigDecimal">
+        SELECT AVG(confidence) FROM log_data WHERE user_id = #{userId} AND confidence IS NOT NULL
+    </select>
+
+    <!-- 用户统计：查询指定用户的井数周环比增长率 -->
+    <select id="getWellsWeeklyGrowthRateByUserId" parameterType="int" resultType="java.math.BigDecimal">
+        SELECT 
+          CASE 
+            WHEN LAG(cnt) OVER (ORDER BY week_num) IS NULL OR LAG(cnt) OVER (ORDER BY week_num) = 0 THEN 0 
+            ELSE ROUND(((cnt - LAG(cnt) OVER (ORDER BY week_num)) / LAG(cnt) OVER (ORDER BY week_num)) * 100, 2) 
+          END as growth_rate 
+        FROM ( 
+          SELECT YEARWEEK(create_time) as week_num, COUNT(DISTINCT well_name) as cnt 
+          FROM log_data WHERE user_id = #{userId}
+          GROUP BY YEARWEEK(create_time) 
+          ORDER BY week_num DESC 
+          LIMIT 1 
+        ) t
+    </select>
+
+    <!-- 根据用户ID查询数据集列表（去重） -->
+    <select id="selectDatasetNamesByUserId" parameterType="int" resultType="string">
+        SELECT DISTINCT dataset_name 
+        FROM log_data 
+        WHERE user_id = #{userId} 
+        ORDER BY dataset_name
+    </select>
+
+</mapper>

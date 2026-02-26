@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.WellLogCurveSystem.mapper.GeneratedReportMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="GeneratedReportMap" type="com.example.WellLogCurveSystem.entity.GeneratedReport">
+        <id column="id" property="id"/>
+        <result column="template_id" property="templateId"/>
+        <result column="user_id" property="userId"/>
+        <result column="report_title" property="reportTitle"/>
+        <result column="parameters" property="parameters"/>
+        <result column="content" property="content"/>
+        <result column="documentUrl" property="documentUrl"/>
+        <result column="file_path" property="filePath"/>
+        <result column="download_count" property="downloadCount"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="complete_time" property="completeTime"/>
+    </resultMap>
+
+    <!-- 插入新报告 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO generated_report(template_id, user_id, report_title, parameters, content, documentUrl, file_path, status, create_time)
+        VALUES(#{templateId}, #{userId}, #{reportTitle}, #{parameters}, #{content}, #{documentUrl}, #{filePath}, #{status}, NOW())
+    </insert>
+
+    <!-- 根据ID查询报告 -->
+    <select id="selectById" resultMap="GeneratedReportMap">
+        SELECT id, template_id, user_id, report_title, parameters, content, documentUrl, file_path,
+               download_count, status, create_time, complete_time
+        FROM generated_report 
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据用户ID查询报告列表 -->
+    <select id="selectByUserId" resultMap="GeneratedReportMap">
+        SELECT id, template_id, user_id, report_title, parameters, content, documentUrl, file_path,
+               download_count, status, create_time, complete_time
+        FROM generated_report 
+        WHERE user_id = #{userId} 
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 增加下载次数 -->
+    <update id="incrementDownloadCount">
+        UPDATE generated_report 
+        SET download_count = download_count + 1 
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新报告状态 -->
+    <update id="updateStatus">
+        UPDATE generated_report 
+        SET status = #{status}, complete_time = NOW() 
+        WHERE id = #{id}
+    </update>
+
+</mapper>
