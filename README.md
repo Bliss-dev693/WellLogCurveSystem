@@ -1,4 +1,4 @@
-<img width="2549" height="1408" alt="image" src="https://github.com/user-attachments/assets/8c4317ef-ebc4-47e1-91d8-00467f67b3e9" /># WellLogCurveSystem
+# WellLogCurveSystem
 基于vue3+spring boot+LSTM神经网络的测井重构曲线系统
 
 ## 效果展示
